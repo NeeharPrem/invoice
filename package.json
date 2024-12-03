@@ -1,0 +1,27 @@
+{
+  "name": "my-electron-app",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "main": "main.js",
+  "scripts": {
+    "start": "npm run dev",
+    "dev": "cross-env NODE_ENV=development concurrently \"npm run dev:frontend\" \"npm run electron:dev\"",
+    "build": "npm run build:frontend",
+    "build:frontend": "npm run build --prefix frontend",
+    "dev:frontend": "npm run dev --prefix frontend",
+    "electron:dev": "cross-env NODE_ENV=development wait-on http://localhost:3000 && electron .",
+    "electron:start": "electron .",
+    "lint": "npm run lint --prefix frontend",
+    "preview": "npm run preview --prefix frontend"
+  },
+  "dependencies": {
+    "concurrently": "^9.1.0",
+    "cross-env": "^7.0.3",
+    "electron": "^33.2.1",
+    "electron-builder": "^25.1.8",
+    "electron-is-dev": "^3.0.1",
+    "electron-log": "^5.2.3",
+    "wait-on": "^8.0.1"
+  }
+}
