@@ -1,4 +1,4 @@
-import { app, BrowserWindow, ipcMain, Menu } from 'electron';
+import { app, BrowserWindow, globalShortcut } from 'electron';
 import path from 'path';
 import { promises as fs } from 'fs';
 import { fileURLToPath } from 'url';
@@ -15,6 +15,37 @@ log.info('Application Starting...');
 log.info(`Running in ${isDev ? 'development' : 'production'} mode`);
 
 const gotTheLock = app.requestSingleInstanceLock();
+
+function registerShortcuts(mainWindow) {
+    globalShortcut.register('F1', () => {
+        log.info('payment mode - cash');
+        mainWindow.webContents.send('payment-method', 'cash');
+    });
+
+    globalShortcut.register('F2', () => {
+        log.info('paymnent mode - card');
+        mainWindow.webContents.send('payment-method', 'card');
+    });
+
+    globalShortcut.register('F3', () => {
+        log.info('payment mode - upi');
+        mainWindow.webContents.send('payment-method', 'upi');
+    });
+
+    globalShortcut.register('F12', () => {
+        log.info('split payment');
+        mainWindow.webContents.send('payment-method', 'split');
+    });
+
+    globalShortcut.register('F10', () => {
+        log.info('Focusing on search input');
+        mainWindow.webContents.send('focus-search');
+    });
+}
+
+function unregisterShortcuts() {
+    globalShortcut.unregisterAll();
+}
 
 if (!gotTheLock) {
     app.quit();
@@ -108,7 +139,8 @@ if (!gotTheLock) {
 
     app.whenReady().then(() => {
         log.info('App is ready, creating window...');
-        createWindow();
+        createWindow()
+        registerShortcuts(mainWindow)
     });
 
     app.on('activate', () => {
@@ -125,6 +157,10 @@ if (!gotTheLock) {
             log.info('App closed');
             app.quit();
         }
+    });
+
+    app.on('will-quit', () => {
+        unregisterShortcuts();
     });
 
     process.on('uncaughtException', (error) => {
