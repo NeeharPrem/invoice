@@ -36,6 +36,7 @@ const InvoiceData = () => {
         doc.setFontSize(10);
         doc.text('Bill To:', 20, 60);
         doc.text(`Mr.${billData.name}`, 20, 66);
+        doc.text('Mobile:', 20, 60);
         doc.text(`${billData.mobile}`, 20, 78);
 
         doc.autoTable({
