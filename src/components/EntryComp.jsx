@@ -26,17 +26,11 @@ const EntryComp = () => {
 
     useEffect(() => {
         if (window.electronAPI) {
-            const handlePaymentMethod = (method) => {
-                console.log(`Payment method selected: ${method}`);
-            };
-
             const handleSearchFocus = () => {
                 if (searchRef.current) {
                     searchRef.current.focus();
                 }
             };
-
-            window.electronAPI.onPaymentMethod(handlePaymentMethod);
             window.electronAPI.onSearchFocus(handleSearchFocus);
         }
     }, []);
@@ -202,6 +196,9 @@ const EntryComp = () => {
                                 <div className="p-4">
                                     <h3 className="text-base font-semibold text-gray-800">{product.name}</h3>
                                     <p className="text-sm text-gray-500 mt-1">₹ {product.price}</p>
+                                    {product.discount > 0 && (
+                                        <p className="text-sm text-gray-500 mt-1"><span>Discount : </span>{product.discount} %</p>
+                                    )}
                                 </div>
                             </div>
                         ))}

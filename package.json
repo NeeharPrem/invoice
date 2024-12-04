@@ -1,27 +1,77 @@
 {
-  "name": "my-electron-app",
-  "version": "1.0.0",
+  "name": "my-react-app",
   "private": true,
+  "version": "0.0.0",
   "type": "module",
   "main": "main.js",
   "scripts": {
-    "start": "npm run dev",
-    "dev": "cross-env NODE_ENV=development concurrently \"npm run dev:frontend\" \"npm run electron:dev\"",
-    "build": "npm run build:frontend",
-    "build:frontend": "npm run build --prefix frontend",
-    "dev:frontend": "npm run dev --prefix frontend",
-    "electron:dev": "cross-env NODE_ENV=development wait-on http://localhost:3000 && electron .",
-    "electron:start": "electron .",
-    "lint": "npm run lint --prefix frontend",
-    "preview": "npm run preview --prefix frontend"
+    "dev": "vite",
+    "build": "vite build",
+    "lint": "eslint .",
+    "preview": "vite preview",
+    "electron:dev": "cross-env NODE_ENV=development concurrently \"npm run dev\" \"electron .\"",
+    "electron:build": "cross-env NODE_ENV=production npm run build && electron-builder"
   },
   "dependencies": {
     "concurrently": "^9.1.0",
     "cross-env": "^7.0.3",
-    "electron": "^33.2.1",
-    "electron-builder": "^25.1.8",
     "electron-is-dev": "^3.0.1",
     "electron-log": "^5.2.3",
-    "wait-on": "^8.0.1"
-  }
+    "idb": "^8.0.0",
+    "jspdf": "^2.5.2",
+    "jspdf-autotable": "^3.8.4",
+    "lucide-react": "^0.464.0",
+    "mongoose": "^8.8.3",
+    "my-electron-app": "file:..",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-modal": "^3.16.1",
+    "react-router-dom": "^7.0.2",
+    "react-toastify": "^10.0.6",
+    "tailwind-scrollbar": "^3.1.0"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.15.0",
+    "@types/react": "^18.3.12",
+    "@types/react-dom": "^18.3.1",
+    "@vitejs/plugin-react": "^4.3.4",
+    "autoprefixer": "^10.4.20",
+    "electron": "^33.2.1",
+    "eslint": "^9.15.0",
+    "eslint-plugin-react": "^7.37.2",
+    "eslint-plugin-react-hooks": "^5.0.0",
+    "eslint-plugin-react-refresh": "^0.4.14",
+    "globals": "^15.12.0",
+    "postcss": "^8.4.49",
+    "tailwindcss": "^3.4.15",
+    "vite": "^6.0.1"
+  },
+  "build": {
+    "appId": "com.billing.app",
+    "productName": "Billing",
+    "files": [
+      "dist/**/*",
+      "main.js",
+      "preload.js"
+    ],
+    "directories": {
+      "output": "release/${version}"
+    },
+    "win": {
+      "target": [
+        "nsis"
+      ]
+    },
+    "mac": {
+      "target": [
+        "dmg"
+      ]
+    },
+    "linux": {
+      "target": [
+        "AppImage"
+      ]
+    }
+  },
+  "homepage": "./"
 }

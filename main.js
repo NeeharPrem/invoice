@@ -1,7 +1,8 @@
-import { app, BrowserWindow, globalShortcut } from 'electron';
+import { app, BrowserWindow, globalShortcut, ipcMain } from 'electron';
 import path from 'path';
 import { promises as fs } from 'fs';
 import { fileURLToPath } from 'url';
+import mongoose from 'mongoose'
 import log from 'electron-log';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -23,7 +24,7 @@ function registerShortcuts(mainWindow) {
     });
 
     globalShortcut.register('F2', () => {
-        log.info('paymnent mode - card');
+        log.info('payment mode - card');
         mainWindow.webContents.send('payment-method', 'card');
     });
 
@@ -56,7 +57,6 @@ if (!gotTheLock) {
         for (let i = 0; i < retries; i++) {
             try {
                 await mainWindow.loadURL('http://localhost:3000');
-                // mainWindow.setMenuBarVisibility(false);
                 log.info('Connected to Vite server');
                 return;
             } catch (err) {
@@ -81,8 +81,8 @@ if (!gotTheLock) {
         log.info(`Preload path: ${preloadPath}`);
 
         mainWindow = new BrowserWindow({
-            width: 800,
-            height: 600,
+            width: 1080,
+            height: 720,
             webPreferences: {
                 nodeIntegration: false,
                 contextIsolation: true,
@@ -109,6 +109,7 @@ if (!gotTheLock) {
                     loadProductionBuild(mainWindow);
                 });
         } else {
+            mainWindow.setMenuBarVisibility(false);
             loadProductionBuild(mainWindow);
         }
 
@@ -128,6 +129,101 @@ if (!gotTheLock) {
             }
         });
     }
+
+    ipcMain.on('save-pdf', async (event, base64PDF) => {
+        try {
+            const downloadsPath = app.getPath('downloads');
+
+            const timestamp = new Date().toISOString().replace(/[:T]/g, '-').split('.')[0];
+            const filename = `Invoice_${timestamp}.pdf`;
+            const filePath = path.join(downloadsPath, filename);
+            const buffer = Buffer.from(base64PDF, 'base64');
+            await fs.writeFile(filePath, buffer);
+            event.reply('pdf-saved', {
+                success: true,
+                path: filePath
+            });
+
+            log.info(`PDF saved to: ${filePath}`);
+        } catch (error) {
+            log.error('Failed to save PDF:', error);
+            event.reply('pdf-saved', {
+                success: false,
+                error: error.message
+            });
+        }
+    });
+
+    mongoose.connect('mongodb+srv://x2cvicious123:n3rLzUNO8oyCXZBE@cluster0.iftaqh1.mongodb.net/Invoice', {
+        useNewUrlParser: true,
+        useUnifiedTopology: true,
+    });
+
+    const BackupModel = mongoose.model('Backup', new mongoose.Schema({}, { strict: false }));
+
+    const BillSchema = new mongoose.Schema({
+        invoiceNumber: { type: String, required: true },
+        customerName: { type: String, required: true },
+        items: [
+            {
+                itemName: { type: String, required: true },
+                quantity: { type: Number, required: true },
+                price: { type: Number, required: true },
+            },
+        ],
+        totalAmount: { type: Number, required: true },
+        date: { type: Date, default: Date.now },
+    });
+
+    const BillModel = mongoose.model('Bill', BillSchema);
+
+    ipcMain.on('backup-data', async (event, data) => {
+        try {
+            const existingBackups = await BackupModel.find({
+                invoiceNumber: { $in: data.map(bill => bill.invoiceNumber) }
+            });
+
+            const existingInvoiceNumbers = new Set(
+                existingBackups.map(backup => backup.invoiceNumber)
+            );
+
+            const newBillsToBackup = data.filter(
+                bill => !existingInvoiceNumbers.has(bill.invoiceNumber)
+            );
+
+            if (newBillsToBackup.length > 0) {
+                await BackupModel.insertMany(newBillsToBackup);
+                console.log(`Backup successful. ${newBillsToBackup.length} new bills backed up.`);
+                event.reply('backup-status', {
+                    success: true,
+                    totalNewBills: newBillsToBackup.length
+                });
+            } else {
+                console.log('No new bills to backup');
+                event.reply('backup-status', {
+                    success: true,
+                    totalNewBills: 0
+                });
+            }
+        } catch (err) {
+            console.error('Backup failed', err);
+            event.reply('backup-status', {
+                success: false,
+                error: err.message
+            });
+        }
+    });
+
+    ipcMain.on('add-bill', async (event, bill) => {
+        try {
+            const newBill = new BillModel(bill);
+            await newBill.save();
+            console.log('Bill saved successfully');
+        } catch (err) {
+            console.error('Failed to save bill', err);
+        }
+    });
+
     app.on('second-instance', (event, commandLine, workingDirectory) => {
         if (mainWindow) {
             if (mainWindow.isMinimized()) {
@@ -139,8 +235,8 @@ if (!gotTheLock) {
 
     app.whenReady().then(() => {
         log.info('App is ready, creating window...');
-        createWindow()
-        registerShortcuts(mainWindow)
+        createWindow();
+        registerShortcuts(mainWindow);
     });
 
     app.on('activate', () => {
