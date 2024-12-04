@@ -15,7 +15,6 @@
   "dependencies": {
     "concurrently": "^9.1.0",
     "cross-env": "^7.0.3",
-    "electron-builder": "^25.1.8",
     "electron-is-dev": "^3.0.1",
     "electron-log": "^5.2.3",
     "idb": "^8.0.0",
@@ -38,6 +37,7 @@
     "@vitejs/plugin-react": "^4.3.4",
     "autoprefixer": "^10.4.20",
     "electron": "^33.2.1",
+    "electron-builder": "^25.1.8",
     "eslint": "^9.15.0",
     "eslint-plugin-react": "^7.37.2",
     "eslint-plugin-react-hooks": "^5.0.0",
