@@ -27,7 +27,6 @@ const InvoiceData = () => {
         const doc = new jsPDF();
 
         doc.setFontSize(12);
-
         doc.setFontSize(16);
         doc.setFont('helvetica', 'bold');
         doc.text('Billing System Output', 105, 20, { align: 'center' });
@@ -56,7 +55,7 @@ const InvoiceData = () => {
                 cellPadding: 3
             },
             headStyles: {
-                fillColor: [41, 128, 185],
+                fillColor: [41, 41, 41],
                 textColor: 255
             }
         });
@@ -74,107 +73,109 @@ const InvoiceData = () => {
         doc.text(`₹ ${billData.totalPayable.toFixed(2)}`, 180, tableEnd + 22, { align: 'right' });
 
         const pdfBytes = doc.output('arraybuffer');
-
         const base64PDF = btoa(String.fromCharCode.apply(null, new Uint8Array(pdfBytes)));
         window.electronAPI.savePDF(base64PDF);
     };
 
-    const renderItemRow = (item, index) => (
-        <tr key={index} className="hover:bg-gray-100 transition-colors duration-200">
-            <td className="p-3 border-b text-gray-700">{index + 1}</td>
-            <td className="p-3 border-b font-medium text-gray-800">{item.name}</td>
-            <td className="p-3 border-b text-gray-600">₹ {item.price}</td>
-            <td className="p-3 border-b text-gray-600">{item.count}</td>
-            <td className="p-3 border-b text-red-500">₹ {item.discount}</td>
-            <td className="p-3 border-b font-semibold text-green-700">₹ {item.price * item.count}</td>
-        </tr>
-    );
-
     return (
-        <div className="w-full h-screen flex flex-col p-4 bg-gray-50">
-            <div className="flex flex-1 gap-4 overflow-hidden">
-                <div className="flex-1 bg-white shadow-xl border border-gray-200 flex flex-col">
-                    <div className="bg-blue-600 p-4 border-b">
-                        <h2 className="text-lg font-bold text-white">Invoice Details</h2>
+        <div className="flex flex-col h-screen bg-[#f0f0f0] p-1">
+            <div className="flex justify-between bg-[#2c2c2c] text-white p-1 pl-2 pr-2">
+                <div className="flex items-center space-x-2">
+                    <span className="text-sm">Invoice Details</span>
+                </div>
+            </div>
+            <div className="flex flex-1 overflow-hidden">
+                <div className="w-2/3 bg-white border-r border-gray-300">
+                    <div className="bg-[#e1e1e1] p-2 border-b border-gray-300">
+                        <h2 className="text-sm font-semibold">Invoice Items</h2>
                     </div>
-                    <div className="flex-1 overflow-auto">
-                        <table className="w-full">
-                            <thead className="bg-gray-100 sticky top-0">
+                    <div className="overflow-auto h-full">
+                        <table className="w-full text-xs">
+                            <thead className="bg-[#f0f0f0] sticky top-0">
                                 <tr>
                                     {['No', 'Name', 'Price', 'Qty', 'Disc', 'Amount'].map((header) => (
-                                        <th key={header} className="p-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">
+                                        <th key={header} className="p-2 text-left border-b">
                                             {header}
                                         </th>
                                     ))}
                                 </tr>
                             </thead>
                             <tbody>
-                                {billData.products.map(renderItemRow)}
+                                {billData.products.map((item, index) => (
+                                    <tr key={index} className="hover:bg-gray-100">
+                                        <td className="p-2 border-b">{index + 1}</td>
+                                        <td className="p-2 border-b">{item.name}</td>
+                                        <td className="p-2 border-b">₹ {item.price}</td>
+                                        <td className="p-2 border-b">{item.count}</td>
+                                        <td className="p-2 border-b text-red-500">₹ {item.discount}</td>
+                                        <td className="p-2 border-b font-semibold">₹ {item.price * item.count}</td>
+                                    </tr>
+                                ))}
                             </tbody>
                         </table>
                     </div>
-                    <div className="flex flex-row justify-between p-4 bg-gray-50 text-right text-sm text-gray-600">
-                        <div className='flex flex-col items-start'>
-                            <p>Subtotal</p>
-                            <p>Tax</p>
-                            <p className='text-2xl font-semibold'>Total</p>
-                        </div>
-                        <div className='flex flex-col'>
-                            <p>₹ {billData.subtotal}</p>
-                            <p>{billData.taxRate} %</p>
-                            <p className='text-2xl'>₹ {billData.totalPayable}</p>
-                        </div>
-                    </div>
                 </div>
-                <div className="flex-1 flex flex-col space-y-4">
-                    <div className="bg-white shadow-xl border border-gray-200 p-6">
-                        <h3 className="text-lg font-bold text-blue-600 mb-4">Customer Information</h3>
-                        <div className="space-y-2">
-                            <div className="flex flex-col gap-2">
-                                <span className="font-medium text-gray-800">{billData.name}</span>
-                                <span className="text-gray-500 text-sm">{billData.mobile}</span>
+                <div className="w-1/3 flex flex-col">
+                    <div className="bg-white border-b border-gray-300">
+                        <div className="bg-[#e1e1e1] p-2 border-b border-gray-300">
+                            <h3 className="text-sm font-semibold">Customer</h3>
+                        </div>
+                        <div className="p-3 text-xs">
+                            <div className="mb-2">
+                                <span className="font-semibold">Name:</span> {billData.name}
+                            </div>
+                            <div>
+                                <span className="font-semibold">Mobile:</span> {billData.mobile}
                             </div>
                         </div>
                     </div>
-                    <div className="bg-white shadow-xl border border-gray-200 p-6 flex-1 flex flex-col justify-between">
-                        <div>
-                            <h3 className="text-lg font-bold text-blue-600 mb-4">Payment Summary</h3>
-                            <div className="space-y-3">
-                                <div className="flex justify-between">
-                                    <span className="text-gray-600">Payment Method</span>
-                                    <span className="font-medium text-gray-800">Cash</span>
-                                </div>
-                                <div className="flex justify-between">
-                                    <span className="text-gray-600">Total Amount Paid</span>
-                                    <span className="font-semibold text-green-700">₹ {billData.totalPayable}</span>
-                                </div>
-                                <div className="flex justify-between">
-                                    <span className="text-gray-600">Subtotal</span>
-                                    <span className="font-semibold">₹ {billData.subtotal}</span>
-                                </div>
-                                <div className="flex justify-between">
-                                    <span className="text-gray-600">Tax</span>
-                                    <span className="font-semibold text-red-500">{billData.taxRate} %</span>
-                                </div>
-                                <div className="flex justify-between">
-                                    <span className="text-gray-600">Remaining Amount</span>
-                                    <span className="font-semibold text-red-500">{0}</span>
-                                </div>
+                    <div className="bg-white flex-1">
+                        <div className="bg-[#e1e1e1] p-2 border-b border-gray-300">
+                            <h3 className="text-sm font-semibold">Payment Summary</h3>
+                        </div>
+                        <div className="p-3 text-xs">
+                            <div className="flex justify-between mb-1">
+                                <span>Subtotal</span>
+                                <span>₹ {billData.subtotal}</span>
+                            </div>
+                            <div className="flex justify-between mb-1">
+                                <span>Tax ({billData.taxRate}%)</span>
+                                <span className="text-red-500">+ ₹ {(billData.subtotal * billData.taxRate / 100).toFixed(2)}</span>
+                            </div>
+                            <div className="flex justify-between font-bold mt-2 border-t pt-2">
+                                <span>Total</span>
+                                <span>₹ {billData.totalPayable}</span>
                             </div>
                         </div>
                     </div>
-                    <div className="flex justify-between">
-                        <div className="flex space-x-2">
-                            <button onClick={generatePDF} className="bg-blue-600 text-white px-4 py-2 hover:bg-blue-700 transition">
-                                PDF
-                            </button>
-                        </div>
-                        <button onClick={() => navigate('/')} className="bg-green-600 text-white px-6 py-2 hover:bg-green-700 transition">
+
+                    <div className="bg-[#e1e1e1] p-2 flex justify-between">
+                        <button
+                            onClick={generatePDF}
+                            className="bg-[#0078d7] w-30 h-12 text-white text-xs px-3 py-1 hover:bg-[#005a9e] transition"
+                        >
+                            Generate PDF
+                        </button>
+                        <button
+                            onClick={() => navigate('/')}
+                            className="bg-[#4CAF50] w-30 h-12 text-white text-xs px-3 py-1 hover:bg-[#45a049] transition"
+                        >
                             New Sale
                         </button>
                     </div>
                 </div>
             </div>
+            <ToastContainer
+                position="bottom-right"
+                autoClose={3000}
+                hideProgressBar={false}
+                newestOnTop={false}
+                closeOnClick
+                rtl={false}
+                pauseOnFocusLoss
+                draggable
+                pauseOnHover
+            />
         </div>
     );
 };

@@ -205,7 +205,7 @@ const EntryComp = () => {
                     </div>
                 </div>
             </div>
-            <div className="w-[45rem] border-l">
+            <div className="w-[40rem] border-l">
                 <Cart product={selectedProduct} />
             </div>
         </div>
