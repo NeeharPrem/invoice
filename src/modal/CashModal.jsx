@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import Modal from 'react-modal';
-import { X, Circle } from 'lucide-react';
+import { X } from 'lucide-react';
 import { saveBillToDB } from '../helper/billData';
 import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
@@ -61,7 +61,7 @@ const CashModal = ({ reset, data, subtotal, discountTotal, taxRate, taxAmount, t
             className="fixed inset-0 z-50 flex items-center justify-center p-4 overflow-y-auto"
             overlayClassName="fixed inset-0 bg-black/50 backdrop-blur-sm"
         >
-            <div className="relative w-96 bg-white rounded-xl shadow-2xl border border-gray-200 p-6">
+            <div className="relative w-96 bg-white shadow-2xl border border-gray-200 p-6">
                 <button
                     onClick={onClose}
                     className="absolute top-4 right-4 text-gray-500 hover:text-gray-700 transition-colors"
@@ -71,7 +71,6 @@ const CashModal = ({ reset, data, subtotal, discountTotal, taxRate, taxAmount, t
 
                 <div className="mb-6 text-center">
                     <h2 className="text-2xl font-bold text-gray-800 flex items-center justify-center gap-2">
-                        <Circle fill="green" color="green" size={12} />
                         Transaction
                     </h2>
                 </div>
@@ -96,7 +95,7 @@ const CashModal = ({ reset, data, subtotal, discountTotal, taxRate, taxAmount, t
 
                     <button
                         onClick={proceedWithBill}
-                        className="w-full bg-blue-500 text-white py-3 rounded-lg hover:bg-blue-600 transition-colors font-semibold shadow-md"
+                        className="w-full bg-black text-white py-3  hover:bg-gray-600 transition-colors font-semibold shadow-md"
                     >
                         Proceed
                     </button>

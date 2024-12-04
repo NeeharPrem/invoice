@@ -125,88 +125,98 @@ const EntryComp = () => {
     };
 
     return (
-        <div className="flex h-screen w-full">
-            <div className="w-64 bg-gray-50 p-6">
-                <h5 className="text-xl font-bold text-gray-800 mb-4 pb-2 border-b-2 border-gray-300">
-                    Categories
-                </h5>
-                {Categories.map((item, index) => (
-                    <div
-                        key={index}
-                        onClick={() => {
-                            setSelectedCategory(item);
-                            setSearchQuery('');
-                            setSearchResults([]);
-                            setVisibleProducts(12);
-                        }}
-                        className={`py-2 px-3 hover:bg-gray-100 rounded cursor-pointer transition duration-300 ${selectedCategory === item
-                            ? 'bg-blue-100 text-blue-600'
-                            : 'text-black hover:text-blue-600'
-                            }`}
-                    >
-                        {item}
-                    </div>
-                ))}
-            </div>
-            <div className="flex-grow flex flex-col">
-                <div className="p-4 bg-white border-b relative">
-                    <input
-                        ref={searchRef}
-                        value={searchQuery}
-                        onChange={handleSearchChange}
-                        onKeyDown={handleKeyDown}
-                        placeholder="Search products..."
-                        className="w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
-                    {searchResults.length > 0 && searchQuery.trim() !== '' && (
-                        <div className="absolute z-10 w-full left-0 top-full hover:shadow-md bg-white border shadow-lg max-h-60 overflow-y-auto">
-                            {searchResults.map((product, index) => (
-                                <div
-                                    key={product.id}
-                                    ref={(el) => searchResultsRef.current[index] = el}
-                                    className={`p-2 cursor-pointer hover:shadow-md hover:bg-gray-100 ${index === selectedSearchIndex ? 'bg-blue-100' : ''}`}
-                                    onClick={() => handleProductSelection(product)}
-                                >
-                                    {product.name} - {product.category}
-                                </div>
-                            ))}
-                        </div>
-                    )}
+        <div className="flex flex-col h-screen bg-[#f0f0f0]">
+            <div className="flex justify-between bg-[#2c2c2c] text-white p-1 pl-2 pr-2">
+                <div className="flex items-center space-x-2">
+                    <span className="text-sm">Invoice</span>
                 </div>
-                <div
-                    className="flex-grow overflow-y-auto p-6 scrollbar-thin scrollbar-thumb-gray-500 scrollbar-track-gray-200"
-                    ref={scrollableRef}
-                    onScroll={handleScroll}
-                    style={{
-                        pointerEvents: 'auto',
-                    }}
-                >
-                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-                        {displayProducts.slice(0, visibleProducts).map((product) => (
+            </div>
+            <div className="flex flex-1 overflow-hidden">
+                <div className="w-52 bg-white border-r border-gray-300">
+                    <div className="bg-[#e1e1e1] text-black p-2 border-b border-gray-300">
+                        <h2 className="text-sm font-semibold">Categories</h2>
+                    </div>
+                    <div>
+                        {Categories.map((item, index) => (
                             <div
-                                key={product.id}
-                                className="bg-white rounded-lg shadow-md hover:shadow-xl overflow-hidden transition-all duration-300 transform hover:-translate-y-2 cursor-pointer"
-                                onClick={() => handleProductSelection(product)}
+                                key={index}
+                                onClick={() => {
+                                    setSelectedCategory(item);
+                                    setSearchQuery('');
+                                    setSearchResults([]);
+                                    setVisibleProducts(12);
+                                }}
+                                className={`p-2 text-xs cursor-pointer ${selectedCategory === item
+                                    ? 'bg-black text-white'
+                                    : 'text-black hover:bg-gray-200'
+                                    }`}
                             >
-                                <img
-                                    src={product.image}
-                                    alt={product.name}
-                                    className="w-full h-48 object-cover"
-                                />
-                                <div className="p-4">
-                                    <h3 className="text-base font-semibold text-gray-800">{product.name}</h3>
-                                    <p className="text-sm text-gray-500 mt-1">₹ {product.price}</p>
-                                    {product.discount > 0 && (
-                                        <p className="text-sm text-gray-500 mt-1"><span>Discount : </span>{product.discount} %</p>
-                                    )}
-                                </div>
+                                {item}
                             </div>
                         ))}
                     </div>
                 </div>
-            </div>
-            <div className="w-[40rem] border-l">
-                <Cart product={selectedProduct} />
+                <div className="flex-1 flex flex-col">
+                    <div className="bg-white border-b p-2">
+                        <input
+                            ref={searchRef}
+                            value={searchQuery}
+                            onChange={handleSearchChange}
+                            onKeyDown={handleKeyDown}
+                            placeholder="Search products..."
+                            className="w-full p-1 text-xs border rounded focus:outline-none focus:ring-1 focus:ring-[#0078d7]"
+                        />
+                        {searchResults.length > 0 && searchQuery.trim() !== '' && (
+                            <div className="absolute w-1/2 z-10 bg-white border shadow-lg max-h-48 overflow-y-auto text-xs">
+                                {searchResults.map((product, index) => (
+                                    <div
+                                        key={product.id}
+                                        ref={(el) => searchResultsRef.current[index] = el}
+                                        className={`p-2 cursor-pointer hover:bg-gray-100 ${index === selectedSearchIndex ? 'bg-[#e6f2ff]' : ''}`}
+                                        onClick={() => handleProductSelection(product)}
+                                    >
+                                        {product.name} - {product.category}
+                                    </div>
+                                ))}
+                            </div>
+                        )}
+                    </div>
+                    <div
+                        className="flex-1 overflow-auto p-2"
+                        ref={scrollableRef}
+                        onScroll={handleScroll}
+                    >
+                        <div className="grid grid-cols-4 gap-2">
+                            {displayProducts.slice(0, visibleProducts).map((product) => (
+                                <div
+                                    key={product.id}
+                                    className="bg-white border rounded overflow-hidden cursor-pointer hover:shadow-md transition-shadow"
+                                    onClick={() => handleProductSelection(product)}
+                                >
+                                    <img
+                                        src={product.image}
+                                        alt={product.name}
+                                        className="w-full h-32 object-cover"
+                                    />
+                                    <div className="p-2">
+                                        <h3 className="text-xs font-semibold truncate">{product.name}</h3>
+                                        <div className="flex justify-between text-xs">
+                                            <span>₹ {product.price}</span>
+                                            {product.discount > 0 && (
+                                                <span className="text-red-500">
+                                                    {product.discount}% off
+                                                </span>
+                                            )}
+                                        </div>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                </div>
+                <div className="w-96 border-l">
+                    <Cart product={selectedProduct} />
+                </div>
             </div>
         </div>
     );
