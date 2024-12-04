@@ -17,6 +17,7 @@
     "electron-is-dev": "^3.0.1",
     "electron-log": "^5.2.3",
     "idb": "^8.0.0",
+    "lucide-react": "^0.464.0",
     "my-electron-app": "file:..",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
