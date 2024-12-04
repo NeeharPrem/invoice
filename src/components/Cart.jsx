@@ -28,7 +28,7 @@ const Cart = ({ product }) => {
   }, []);
 
   useEffect(() => {
-    if (product) {
+    if (product && customerName !== '' && mobileNumber !== '') {
       setAddedProducts((prevProducts) => {
         const existingProductIndex = prevProducts.findIndex((p) => p.id === product.id);
 
