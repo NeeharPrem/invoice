@@ -15,6 +15,7 @@
   "dependencies": {
     "concurrently": "^9.1.0",
     "cross-env": "^7.0.3",
+    "electron-builder": "^25.1.8",
     "electron-is-dev": "^3.0.1",
     "electron-log": "^5.2.3",
     "idb": "^8.0.0",
