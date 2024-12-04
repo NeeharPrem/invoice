@@ -9,6 +9,10 @@ import { toast} from 'react-toastify';
 async function fetchIndexedDBData() {
   try {
     const db = await openDB('BillData', 2);
+    if (!db.objectStoreNames.contains('Bills')) {
+      console.warn('No database found');
+      return [];
+    }
     const data = await db.getAll('Bills');
     return data;
   } catch (error) {
