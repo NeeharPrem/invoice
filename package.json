@@ -62,7 +62,8 @@
       "oneClick": false,
       "allowToChangeInstallationDirectory": true,
       "license": "LICENSE.txt",
-      "include":"installer.nsi"
+      "include":"installer.nsi",
+      "warningsAsErrors": false
     },
     "win": {
       "target": [
