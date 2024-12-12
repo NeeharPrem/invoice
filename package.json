@@ -62,7 +62,7 @@
       "oneClick": false,
       "allowToChangeInstallationDirectory": true,
       "license": "LICENSE.txt",
-      "include":"installer.nsh"
+      "include":"installer.nsi"
     },
     "win": {
       "target": [
