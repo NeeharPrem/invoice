@@ -9,8 +9,6 @@
 ; Custom page for activation key
 Page custom EnterActivationKey
 
-; Language settings
-!insertmacro MUI_LANGUAGE "English"
 
 ; Installer name and output
 Name "Billing App Activation"
