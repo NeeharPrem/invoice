@@ -58,6 +58,12 @@
     "directories": {
       "output": "release/${version}"
     },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "license": "LICENSE.txt",
+      "include":"installer.nsh"
+    },
     "win": {
       "target": [
         "nsis"
